@@ -3,6 +3,10 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Card } from 'react-bootstrap/';
 
 export class Book extends React.Component {
+   deleteBook=()=> {
+       console.log(this.props.bookId);
+        this.props.deleteBook(this.props.bookId);
+    }
 
     render() {
         return (
@@ -13,6 +17,7 @@ export class Book extends React.Component {
     <p id="description"> description:{this.props.description} </p>
     <h3> 🟢status: {this.props.status} </h3>
    <h3 className="favorites"> 📧email:{this.props.email} </h3>
+   <button onClick={this.deleteBook}>Delete</button>
 </Card.Body>
 </Card>
     )
