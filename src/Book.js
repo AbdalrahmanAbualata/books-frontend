@@ -4,20 +4,21 @@ import { Card } from 'react-bootstrap/';
 
 export class Book extends React.Component {
    deleteBook=()=> {
-       console.log(this.props.bookId);
-        this.props.deleteBook(this.props.bookId);
-    }
-
+       console.log(this.props.bookInf._id);
+        this.props.deleteBook(this.props.bookInf._id);
+    }   
     render() {
         return (
 <Card style={{ width: '600px', display: "inline-block" }}>
-<Card.Title style={{ textAlign:"center" , fontSize:"40px"}}>📖{this.props.title} </Card.Title>
-<Card.Img style={{ marginLeft: "12.5%", width: "75%", height: "300px" }} variant="top"  src={"https://images.all-free-download.com/images/graphiclarge/3d_books_stacked_picture_166357.jpg"} alt="aaaa" />
+<Card.Title style={{ textAlign:"center" , fontSize:"40px"}}>📖{this.props.bookInf.title} </Card.Title>
+<Card.Img style={{ width: "65%", height: "300px" }} variant="top"  src={"https://cdn.shopify.com/s/files/1/1061/1924/products/Open_Book_Emoji_large.png?v=1571606064"} alt="aaaa" />
 <Card.Body>
-    <p id="description"> description:{this.props.description} </p>
-    <h3> 🟢status: {this.props.status} </h3>
-   <h3 className="favorites"> 📧email:{this.props.email} </h3>
+    <h3> description:</h3>
+    <p id="description">{this.props.bookInf.description} </p>
+    <h3> 🟢status: {this.props.bookInf.status} </h3>
+   <h3 className="favorites"> 📧email:{this.props.bookInf.email} </h3>
    <button onClick={this.deleteBook}>Delete</button>
+   <button onClick={()=> this.props.bookToUpdate(this.props.bookInf)} >Update</button>
 </Card.Body>
 </Card>
     )
