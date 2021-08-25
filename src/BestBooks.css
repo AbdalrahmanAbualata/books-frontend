@@ -10,6 +10,7 @@
 }
 #description{
   font-size: x-large;
-  font-weight: bolder;
-  
+  font-weight: bold;
+  overflow: scroll;
+  height: 150px;
 }

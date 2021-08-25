@@ -6,104 +6,109 @@ import axios from "axios";
 import Book from './Book';
 import SelectBook from "./SelectBook";
 import { withAuth0 } from "@auth0/auth0-react";
+import UpdateBook from './UpdateBook';
+//**********************************************************************************************************************************
 class MyFavoriteBooks extends React.Component {
-  constructor(){
+  constructor() {
     super();
-    this.state={
-      book:[],
-      showData:false,
-      show:false,
+    this.state = {
+      book: [],
+      showData: false,
+      show: false,
+      showUpdate: false,
+      bookToUpdate:{},
     }
   }
 
-  
-  componentDidMount= async () => {
+  //**********************************************************************************************************************************
+  componentDidMount = async () => {
     try {
       let DataResult = await axios.get(`${process.env.REACT_APP_SERVER_LINK}/books?email=${this.props.auth0.user.email}`);
-      console.log( DataResult.data);
-
-      DataResult ?await this.setState({
+      DataResult ? await this.setState({
         book: DataResult.data,
         showData: true,
       }) : this.setState({
         book: [],
-        showData:false,
+        showData: false,
       })
     } catch (error) {
       await this.setState({
         book: [],
-        showData:false,
+        showData: false,
       })
     }
   }
-  handleAddBook  = async (e) =>{
+  //**********************************************************************************************************************************
+  handleAddBook = async (e) => {
     console.log(e.target.status.value);
     e.preventDefault();
-
-    let book ={
-      status : e.target.status.value,
-      description : e.target.desc.value,
-      email : e.target.email.value,
-      title : e.target.title.value,
-    }
-// let book ={ title: "abd",  description: "This Book is for  managment",  status: "On Stock",  email: "abuataabooood@yahoo.com" }
-    // let catInfoData = await axios.get(`${process.env.REACT_APP_SERVER}/addCat`,{params:catInfo}) ****if you want send obj with grt
-    let DataResult = await axios.post(`${process.env.REACT_APP_SERVER_LINK}/addBook?email=${this.props.auth0.user.email}`,book);
-    console.log(DataResult);
+    let book = { status: e.target.status.value, description: e.target.desc.value, email: e.target.email.value, title: e.target.title.value, }
+    let DataResult = await axios.post(`${process.env.REACT_APP_SERVER_LINK}/addBook?email=${this.props.auth0.user.email}`, book);
     await this.setState({
       book: DataResult.data,
     });
-  
   }
-
-   handelShowModel= async ()=>{ // arrow fun
+  //************************************************************************************************************************************
+  handelShowModel = async () => { // arrow fun
     console.log(this);
     await this.setState({
-      show:true,
+      show: true,
     });
-
   }
- handleClose=async ()=>{
+  //**********************************************************************************************************************************
+  handleClose = async () => {
     await this.setState({
-      show:false,
+      show: false,
+      showUpdate: false,
     })
   }
- 
+  // *********************************************************************************************************************************
+  deleteBook = async (bookID) => {
 
-  deleteBook = async (bookID) =>{
-  
     // let DataResult = await axios.delete(`${process.env.REACT_APP_SERVER_LINK}/deletBook?catID=${bookId}`)
-    let DataResult= await axios.delete(`${process.env.REACT_APP_SERVER_LINK}/deletBook/${bookID}?email=${this.props.auth0.user.email}`);
-    console.log(DataResult.data);
+    let DataResult = await axios.delete(`${process.env.REACT_APP_SERVER_LINK}/deletBook/${bookID}?email=${this.props.auth0.user.email}`);
     this.setState({
       book: DataResult.data,
     });
+  }
+  // *********************************************************************************************************************************
+  bookToUpdate = async (bookInf) => { 
+    await this.setState({
+      showUpdate: true,
+      bookToUpdate :bookInf,
+    });
     
   }
-  
+  //**********************************************************************************************************************************
+  handleUpdateBook = async (bookInf) => {
 
-   
+    let DataResult = await axios.put(`${process.env.REACT_APP_SERVER_LINK}/updateBook/${bookInf._id}`,bookInf);// put like post
+    this.setState({
+      book: DataResult.data,
+    });
+
+  }
+  //**********************************************************************************************************************************
   render() {
-    return(
+    return (
       <>
-      <Jumbotron>
-        <h1 >My Favorite Books</h1>
-        <p>
-          This is a collection of my favorite books
-        </p>
-        <button onClick={this.handelShowModel}> Add New Book</button>
-      </Jumbotron>
-       <div id="main" style={{ width: '100%',alignContent:"space-evenly"}}>
-       {this.state.showData && this.state.book.map((book, indx) => {
-
-         return (<Book key={indx}  title={book.title} status={book.status} email={book.email} description={book.description} bookId={book._id} deleteBook={this.deleteBook}/>);
-
-       })
-
-       }
-       </div>
-      <SelectBook show={this.state.show} handleClose={this.handleClose} handleAddBook={this.handleAddBook}/>
-       </>
+        <Jumbotron>
+          <h1 >My Favorite Books</h1>
+          <p>
+            This is a collection of my favorite books
+          </p>
+          <button onClick={this.handelShowModel}> Add New Book</button>
+        </Jumbotron>
+        <div id="main" style={{ width: '100%', alignContent: "space-evenly" }}>
+          {this.state.showData && this.state.book.map((book, indx) => {
+            console.log(book);
+            return (<Book key={indx} bookInf={book} deleteBook={this.deleteBook} bookToUpdate={this.bookToUpdate} />);
+          })
+          }
+        </div>
+        <SelectBook show={this.state.show} handleClose={this.handleClose} handleAddBook={this.handleAddBook} />
+        <UpdateBook showUpdate={this.state.showUpdate} handleClose={this.handleClose} handleUpdateBook={this.handleUpdateBook} bookInf={this.state.bookToUpdate}/>
+      </>
     )
   }
 }
